@@ -353,6 +353,11 @@ with col_prev:
     st.markdown("### 👁 Vista previa")
     d = st.session_state.datos
 
+    medico_solicita = d.get("medico_solicita", "")
+    es_dr_raya = any(x in medico_solicita.lower() for x in ["raya", "rubén", "ruben"])
+    nombre_preview = "Dr. Rubén Raya" if es_dr_raya else medico_solicita
+    matricula_preview = "MP: 3595" if es_dr_raya else ""
+    
     html = f"""
     <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
     <div style="font-family: Arial, sans-serif; border: 1px solid #ccc;
@@ -360,8 +365,8 @@ with col_prev:
 
         <div style="text-align:center; margin-bottom:10px;">
             <div style="font-weight:bold; text-decoration:underline; font-size:15px;">CONSULTORIO CARDIOLÓGICO</div>
-            <div style="font-family: 'Pinyon Script', cursive; font-size:28px;">Dr. Rubén Raya</div>
-            <div style="font-size:11px;">MP: 3595</div>
+            <div style="font-family: 'Pinyon Script', cursive; font-size:28px;">{nombre_preview}</div>
+            <div style="font-size:11px;">{matricula_preview}</div>
             <div style="font-weight:bold; text-decoration:underline; font-size:13px; margin-top:4px;">INFORME ECOCARDIOGRAFICO</div>
         </div>
 
