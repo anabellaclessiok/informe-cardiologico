@@ -307,7 +307,7 @@ with col_form:
 
         if st.session_state.datos.get("imagenes_b64"):
             st.success(f"✅ {len(st.session_state.datos['imagenes_b64'])} imagen(es) cargada(s) correctamente")
-            if st.button("📄 Generar PDF con imágenes", key="btn_pdf_imagenes"):
+            if st.button("📄 Guardar imágenes y generar pdf", key="btn_pdf_imagenes"):
                 from pdf_generator import generar_pdf
                 pdf = generar_pdf(st.session_state.datos)
                 nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
