@@ -136,25 +136,29 @@ with col_form:
             ai_vol  = st.text_input("Volumen AI (ml/m²)",             value=st.session_state.datos.get("ai_vol", ""))
             imvi    = st.text_input("Índice Masa VI (g/m²)",          value=st.session_state.datos.get("imvi", ""))
 
+        def guardar_paso2():
+            st.session_state.datos["ddvi"]    = ddvi
+            st.session_state.datos["dsvi"]    = dsvi
+            st.session_state.datos["fa"]      = fa
+            st.session_state.datos["fe"]      = fe
+            st.session_state.datos["sep"]     = sep
+            st.session_state.datos["pp"]      = pp
+            st.session_state.datos["vd"]      = vd
+            st.session_state.datos["ao"]      = ao
+            st.session_state.datos["ai"]      = ai
+            st.session_state.datos["ai_area"] = ai_area
+            st.session_state.datos["ai_vol"]  = ai_vol
+            st.session_state.datos["imvi"]    = imvi
+
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← Anterior"):
+                guardar_paso2()
                 st.session_state.paso = 1
                 st.rerun()
         with col2:
             if st.button("Siguiente →"):
-                st.session_state.datos["ddvi"]    = ddvi
-                st.session_state.datos["dsvi"]    = dsvi
-                st.session_state.datos["fa"]      = fa
-                st.session_state.datos["fe"]      = fe
-                st.session_state.datos["sep"]     = sep
-                st.session_state.datos["pp"]      = pp
-                st.session_state.datos["vd"]      = vd
-                st.session_state.datos["ao"]      = ao
-                st.session_state.datos["ai"]      = ai
-                st.session_state.datos["ai_area"] = ai_area
-                st.session_state.datos["ai_vol"]  = ai_vol
-                st.session_state.datos["imvi"]    = imvi
+                guardar_paso2()
                 st.session_state.paso = 3
                 st.rerun()
 
@@ -174,20 +178,24 @@ with col_form:
             grad_pul = st.text_input("Gradiente Pulmonar mmHg",             value=st.session_state.datos.get("grad_pul", ""))
             onda_a   = st.text_input("Onda A Mitral cm/seg",                value=st.session_state.datos.get("onda_a", ""))
 
+        def guardar_paso3():
+            st.session_state.datos["vel_ao"]   = vel_ao
+            st.session_state.datos["grad_ao"]  = grad_ao
+            st.session_state.datos["vel_pul"]  = vel_pul
+            st.session_state.datos["grad_pul"] = grad_pul
+            st.session_state.datos["onda_e"]   = onda_e
+            st.session_state.datos["onda_a"]   = onda_a
+            st.session_state.datos["psap"]     = psap
+
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← Anterior"):
+                guardar_paso3()
                 st.session_state.paso = 2
                 st.rerun()
         with col2:
             if st.button("Siguiente →"):
-                st.session_state.datos["vel_ao"]   = vel_ao
-                st.session_state.datos["grad_ao"]  = grad_ao
-                st.session_state.datos["vel_pul"]  = vel_pul
-                st.session_state.datos["grad_pul"] = grad_pul
-                st.session_state.datos["onda_e"]   = onda_e
-                st.session_state.datos["onda_a"]   = onda_a
-                st.session_state.datos["psap"]     = psap
+                guardar_paso3()
                 st.session_state.paso = 4
                 st.rerun()
 
@@ -201,6 +209,7 @@ with col_form:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← Anterior"):
+                st.session_state.datos["hallazgos"] = hallazgos
                 st.session_state.paso = 3
                 st.rerun()
         with col2:
@@ -219,6 +228,7 @@ with col_form:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← Anterior"):
+                st.session_state.datos["doppler"] = doppler
                 st.session_state.paso = 4
                 st.rerun()
         with col2:
@@ -237,6 +247,7 @@ with col_form:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← Anterior"):
+                st.session_state.datos["conclusion"] = conclusion
                 st.session_state.paso = 5
                 st.rerun()
         with col2:
@@ -293,10 +304,6 @@ with col_form:
             if st.button("← Anterior"):
                 st.session_state.paso = 6
                 st.rerun()
-        with col2:
-            if st.button("✅ Generar informe"):
-                st.session_state.paso = 8
-                st.rerun()
 
         if st.session_state.datos.get("imagenes_b64"):
             st.success(f"✅ {len(st.session_state.datos['imagenes_b64'])} imagen(es) cargada(s) correctamente")
@@ -312,64 +319,6 @@ with col_form:
                     key="pdf_paso7_download"
                 )
 
-    # ── PASO 8: Descargar ──
-    elif st.session_state.paso == 8:
-        st.markdown("✅ Informe listo")
-        st.success("¡Todo completado! Descargá el informe a continuación.")
-
-        from pdf_generator import generar_pdf
-        if not st.session_state.datos.get("imagenes_b64") and st.session_state.get("imagenes_b64_backup"):
-            st.session_state.datos["imagenes_b64"] = st.session_state["imagenes_b64_backup"]
-        pdf = generar_pdf(st.session_state.datos)
-
-        nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
-
-        st.download_button(
-            label="⬇ Descargar PDF",
-            data=pdf,
-            file_name=f"Informe_{nombre}.pdf",
-            mime="application/pdf"
-        )
-
-        st.markdown("---")
-        st.markdown("**¿Querés modificar alguna sección?**")
-
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            if st.button("Datos paciente"):
-                st.session_state.paso = 1
-                st.rerun()
-        with c2:
-            if st.button("Mediciones Bid."):
-                st.session_state.paso = 2
-                st.rerun()
-        with c3:
-            if st.button("Doppler"):
-                st.session_state.paso = 3
-                st.rerun()
-        with c4:
-            if st.button("Hallazgos"):
-                st.session_state.paso = 4
-                st.rerun()
-
-        c5, c6, c7, c8 = st.columns(4)
-        with c5:
-            if st.button("Doppler texto"):
-                st.session_state.paso = 5
-                st.rerun()
-        with c6:
-            if st.button("Conclusión"):
-                st.session_state.paso = 6
-                st.rerun()
-        with c7:
-            if st.button("Imágenes"):
-                st.session_state.paso = 7
-                st.rerun()
-        with c8:
-            if st.button("Nuevo informe"):
-                st.session_state.paso = 1
-                st.session_state.datos = {}
-                st.rerun()
 
 # ── VISTA PREVIA ──
 with col_prev:
