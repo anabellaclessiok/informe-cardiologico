@@ -260,14 +260,17 @@ with col_form:
             for i, img in enumerate(imagenes):
                 with cols[i % 4]:
                     st.image(img, use_container_width=True)
-            st.session_state.datos["imagenes_b64"] = []
+            import base64
+            imagenes_b64 = []
             for img in imagenes:
-                import base64
+                img.seek(0)
                 b64 = base64.b64encode(img.read()).decode()
                 ext = img.name.split(".")[-1].lower()
                 if ext == "jpg":
                     ext = "jpeg"
-                st.session_state.datos["imagenes_b64"].append(f"data:image/{ext};base64,{b64}")
+                imagenes_b64.append(f"data:image/{ext};base64,{b64}")
+            st.session_state.datos["imagenes_b64"] = imagenes_b64
+            st.session_state["imagenes_b64_backup"] = imagenes_b64
 
         elif st.session_state.datos.get("imagenes_b64"):
             st.info("✅ Ya tenés imágenes cargadas. Si subís nuevas reemplazarán las anteriores.")
@@ -289,9 +292,11 @@ with col_form:
     # ── PASO 8: Descargar ──
     elif st.session_state.paso == 8:
         st.markdown("✅ Informe listo")
-        st.success("¡Todo completado! Descargá el informe en el formato que prefieras.")
+        st.success("¡Todo completado! Descargá el informe a continuación.")
 
         from pdf_generator import generar_pdf
+        if not st.session_state.datos.get("imagenes_b64") and st.session_state.get("imagenes_b64_backup"):
+            st.session_state.datos["imagenes_b64"] = st.session_state["imagenes_b64_backup"]
         pdf = generar_pdf(st.session_state.datos)
 
         nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
