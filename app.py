@@ -289,10 +289,20 @@ with col_form:
                 st.rerun()
         with col2:
             if st.button("✅ Generar informe"):
-                if st.session_state.get("imagenes_b64_backup"):
-                    st.session_state.datos["imagenes_b64"] = st.session_state["imagenes_b64_backup"]
                 st.session_state.paso = 8
                 st.rerun()
+
+        if st.session_state.datos.get("imagenes_b64"):
+            from pdf_generator import generar_pdf
+            pdf = generar_pdf(st.session_state.datos)
+            nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
+            st.download_button(
+                label="⬇ Descargar PDF ahora",
+                data=pdf,
+                file_name=f"Informe_{nombre}.pdf",
+                mime="application/pdf",
+                key="pdf_paso7"
+            )
 
     # ── PASO 8: Descargar ──
     elif st.session_state.paso == 8:
