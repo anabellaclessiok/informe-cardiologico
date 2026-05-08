@@ -2,6 +2,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 from datetime import date
 from database import guardar_informe, buscar_informes, obtener_todos, obtener_informe_por_id
+import base64
+import requests
+
 
 st.set_page_config(
     page_title="Informe Ecocardiográfico",
@@ -105,6 +108,20 @@ if st.session_state.paso == 8:
                     st.write(f"**Médico:** {r['medico_solicita']}")
                     if st.button("Cargar este informe", key=f"cargar_{r['id']}"):
                         st.session_state.datos = r
+                        # Convertir URLs a base64 para la vista previa
+                        if r.get("imagenes_urls"):
+                            import requests
+                            urls = r["imagenes_urls"].split(",")
+                            imagenes_b64 = []
+                            for url in urls:
+                                if url.strip():
+                                    try:
+                                        resp = requests.get(url.strip())
+                                        b64 = base64.b64encode(resp.content).decode()
+                                        imagenes_b64.append(f"data:image/jpeg;base64,{b64}")
+                                    except:
+                                        pass
+                            st.session_state.datos["imagenes_b64"] = imagenes_b64
                         st.session_state.paso = 1
                         st.rerun()
         else:
@@ -378,7 +395,7 @@ with col_form:
                 st.session_state.paso = 6
                 st.rerun()
         with c7:
-            if st.button("🗑 Nuevo informe", key="p7_nav8"):
+            if st.button("Nuevo informe", key="p7_nav8"):
                 st.session_state.paso = 1
                 st.session_state.datos = {}
                 st.rerun()
