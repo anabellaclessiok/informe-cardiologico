@@ -358,33 +358,33 @@ with col_form:
                 st.session_state.datos = {}
                 st.rerun()
 
-# ── PASO 8: Buscador — FUERA del with col_form ──
-if st.session_state.paso == 8:
-    st.markdown("### 🔍 Buscar informes anteriores")
-    busqueda = st.text_input("Escribí el nombre del paciente")
-    if busqueda:
-        resultados = buscar_informes(busqueda)
-        if resultados:
-            st.success(f"Se encontraron {len(resultados)} informe(s)")
-            for r in resultados:
-                with st.expander(f"{r['paciente']} — {r['fecha']}"):
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.write(f"**Paciente:** {r['paciente']}")
-                        st.write(f"**Edad:** {r['edad']}")
-                        st.write(f"**Fecha:** {r['fecha']}")
-                        st.write(f"**Obra Social:** {r['obra_social']}")
-                    with col2:
-                        st.write(f"**Médico:** {r['medico_solicita']}")
-                    if st.button("Cargar este informe", key=f"cargar_{r['id']}"):
-                        st.session_state.datos = r
-                        st.session_state.paso = 1
-                        st.rerun()
-        else:
-            st.warning("No se encontraron informes para ese paciente.")
-    if st.button("← Volver"):
-        st.session_state.paso = 1
-        st.rerun()
+    # ── PASO 8: Buscador — FUERA del with col_form ──
+    if st.session_state.paso == 8:
+        st.markdown("### 🔍 Buscar informes anteriores")
+        busqueda = st.text_input("Escribí el nombre del paciente")
+        if busqueda:
+            resultados = buscar_informes(busqueda)
+            if resultados:
+                st.success(f"Se encontraron {len(resultados)} informe(s)")
+                for r in resultados:
+                    with st.expander(f"{r['paciente']} — {r['fecha']}"):
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.write(f"**Paciente:** {r['paciente']}")
+                            st.write(f"**Edad:** {r['edad']}")
+                            st.write(f"**Fecha:** {r['fecha']}")
+                            st.write(f"**Obra Social:** {r['obra_social']}")
+                        with col2:
+                            st.write(f"**Médico:** {r['medico_solicita']}")
+                        if st.button("Cargar este informe", key=f"cargar_{r['id']}"):
+                            st.session_state.datos = r
+                            st.session_state.paso = 1
+                            st.rerun()
+            else:
+                st.warning("No se encontraron informes para ese paciente.")
+        if st.button("← Volver"):
+            st.session_state.paso = 1
+            st.rerun()
 
 
 # ── VISTA PREVIA ──
