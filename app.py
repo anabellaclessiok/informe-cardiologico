@@ -258,7 +258,6 @@ with col_form:
 
     # ── PASO 7: Imágenes ──
     elif st.session_state.paso == 7:
-        menu_navegacion()
         st.markdown("Paso 7 — Imágenes")
         imagenes = st.file_uploader(
             "Cargar imágenes del estudio",
@@ -318,6 +317,40 @@ with col_form:
                     mime="application/pdf",
                     key="pdf_paso7_download"
                 )
+
+        st.markdown("---")
+        st.markdown("**¿Querés modificar alguna sección?**")
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            if st.button("👤 Datos paciente", key="p7_nav1"):
+                st.session_state.paso = 1
+                st.rerun()
+        with c2:
+            if st.button("📐 Mediciones Bid.", key="p7_nav2"):
+                st.session_state.paso = 2
+                st.rerun()
+        with c3:
+            if st.button("🔬 Doppler medic.", key="p7_nav3"):
+                st.session_state.paso = 3
+                st.rerun()
+        with c4:
+            if st.button("🔍 Hallazgos", key="p7_nav4"):
+                st.session_state.paso = 4
+                st.rerun()
+        c5, c6, c7, c8 = st.columns(4)
+        with c5:
+            if st.button("🌊 Doppler texto", key="p7_nav5"):
+                st.session_state.paso = 5
+                st.rerun()
+        with c6:
+            if st.button("✅ Conclusión", key="p7_nav6"):
+                st.session_state.paso = 6
+                st.rerun()
+        with c7:
+            if st.button("🗑 Nuevo informe", key="p7_nav8"):
+                st.session_state.paso = 1
+                st.session_state.datos = {}
+                st.rerun()
 
 
 # ── VISTA PREVIA ──
