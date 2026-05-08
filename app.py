@@ -286,6 +286,8 @@ with col_form:
                 st.rerun()
         with col2:
             if st.button("✅ Generar informe"):
+                if st.session_state.get("imagenes_b64_backup"):
+                    st.session_state.datos["imagenes_b64"] = st.session_state["imagenes_b64_backup"]
                 st.session_state.paso = 8
                 st.rerun()
 
