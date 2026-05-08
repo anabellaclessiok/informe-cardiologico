@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from datetime import date
+from database import guardar_informe, buscar_informes, obtener_todos, obtener_informe_por_id
 
 st.set_page_config(
     page_title="Informe Ecocardiográfico",
@@ -307,6 +308,7 @@ with col_form:
         if st.session_state.datos.get("imagenes_b64"):
             st.success(f"✅ {len(st.session_state.datos['imagenes_b64'])} imagen(es) cargada(s) correctamente")
             if st.button("📄 Guardar imágenes y generar pdf", key="btn_pdf_imagenes"):
+                guardar_informe(st.session_state.datos)
                 from pdf_generator import generar_pdf
                 pdf = generar_pdf(st.session_state.datos)
                 nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
@@ -345,6 +347,11 @@ with col_form:
         with c6:
             if st.button("Conclusión", key="p7_nav6"):
                 st.session_state.paso = 6
+                st.rerun()
+        with c7:
+            if st.button("🗑 Nuevo informe", key="p7_nav8"):
+                st.session_state.paso = 1
+                st.session_state.datos = {}
                 st.rerun()
 
 
