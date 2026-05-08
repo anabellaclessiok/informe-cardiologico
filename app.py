@@ -78,7 +78,7 @@ def menu_navegacion():
                 st.session_state.paso = 7
                 st.rerun()
         with c8:
-            if st.button("🔍 Buscar informe", key="nav_buscar"):
+            if st.button("Buscar informe", key="nav_buscar"):
                 st.session_state.paso = 9
                 st.rerun()
         with c9:
