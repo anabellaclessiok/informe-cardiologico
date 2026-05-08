@@ -78,8 +78,8 @@ def menu_navegacion():
                 st.session_state.paso = 7
                 st.rerun()
         with c8:
-            if st.button("🔍 Buscar informe", key="nav_buscar"):
-                st.session_state.paso = 9
+            if st.button("Buscar informe", key="nav_buscar"):
+                st.session_state.paso = 8
                 st.rerun()
         with c9:
             if st.button("Nuevo informe", key="nav8"):
@@ -90,7 +90,7 @@ def menu_navegacion():
 col_form, col_prev = st.columns([1, 1], gap="large")
 
 if st.session_state.paso == 8:
-    st.markdown("### 🔍 Buscar informes anteriores")
+    st.markdown("Buscar informes anteriores")
     busqueda = st.text_input("Escribí el nombre del paciente")
     if busqueda:
         resultados = buscar_informes(busqueda)
