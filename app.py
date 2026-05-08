@@ -252,14 +252,11 @@ with col_form:
         imagenes = st.file_uploader(
             "Cargar imágenes del estudio",
             type=["jpg", "jpeg", "png"],
-            accept_multiple_files=True
+            accept_multiple_files=True,
+            key="uploader_imagenes"
         )
 
         if imagenes:
-            cols = st.columns(4)
-            for i, img in enumerate(imagenes):
-                with cols[i % 4]:
-                    st.image(img, use_container_width=True)
             import base64
             imagenes_b64 = []
             for img in imagenes:
@@ -269,8 +266,14 @@ with col_form:
                 if ext == "jpg":
                     ext = "jpeg"
                 imagenes_b64.append(f"data:image/{ext};base64,{b64}")
+
             st.session_state.datos["imagenes_b64"] = imagenes_b64
             st.session_state["imagenes_b64_backup"] = imagenes_b64
+
+            cols = st.columns(4)
+            for i, b64 in enumerate(imagenes_b64):
+                with cols[i % 4]:
+                    st.image(b64, use_container_width=True)
 
         elif st.session_state.datos.get("imagenes_b64"):
             st.info("✅ Ya tenés imágenes cargadas. Si subís nuevas reemplazarán las anteriores.")
