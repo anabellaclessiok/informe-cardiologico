@@ -86,12 +86,23 @@ def generar_pdf(d):
     leading=16)
 
     # ── ENCABEZADO ──
+    medico_solicita = d.get("medico_solicita", "")
+    es_dr_raya = any(x in medico_solicita.lower() for x in ["raya", "rubén", "ruben"])
+
+    try:
+        import streamlit as st
+        matricula     = st.secrets["MATRICULA"] if es_dr_raya else ""
+        nombre_medico = f"Dr. {st.secrets['MEDICO_NOMBRE']}" if es_dr_raya else medico_solicita
+    except:
+        matricula     = "MP: 3595" if es_dr_raya else ""
+        nombre_medico = "Dr. Rubén Raya" if es_dr_raya else medico_solicita
+
     story.append(Spacer(1, 6*mm))
     story.append(Paragraph("<u>CONSULTORIO CARDIOLÓGICO</u>", titulo))
     story.append(Spacer(1, 3*mm))
-    story.append(Paragraph("Dr. Rubén Raya", cursiva))
+    story.append(Paragraph(nombre_medico, cursiva))
     story.append(Spacer(1, 3*mm))
-    story.append(Paragraph("MP: 3595", normal_c))
+    story.append(Paragraph(matricula, normal_c))
     story.append(Spacer(1, 3*mm))
     story.append(Paragraph("<u>INFORME ECOCARDIOGRAFICO</u>", subtitulo))
     story.append(Spacer(1, 4*mm))
@@ -273,19 +284,20 @@ def generar_pdf(d):
 
 
     def agregar_firma(canvas, doc):
-        canvas.saveState()
-        firma_path = 'firma.png'
-        if os.path.exists(firma_path):
-            canvas.drawImage(
-                firma_path,
-                x=doc.pagesize[0] - 20*mm - 55*mm,
-                y=10*mm,
-                width=55*mm,
-                height=28*mm,
-                preserveAspectRatio=True,
-                mask='auto'
-            )
-        canvas.restoreState()
+        if es_dr_raya:
+            canvas.saveState()
+            firma_path = 'firma.png'
+            if os.path.exists(firma_path):
+                canvas.drawImage(
+                    firma_path,
+                    x=doc.pagesize[0] - 20*mm - 55*mm,
+                    y=10*mm,
+                    width=55*mm,
+                    height=28*mm,
+                    preserveAspectRatio=True,
+                    mask='auto'
+                )
+            canvas.restoreState()
 
     doc.build(story, onFirstPage=agregar_firma, onLaterPages=agregar_firma)
     buffer.seek(0)
