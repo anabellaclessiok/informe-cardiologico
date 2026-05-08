@@ -258,14 +258,20 @@ with col_form:
 
         if imagenes:
             import base64
+            from PIL import Image as PILImage
+            from io import BytesIO
             imagenes_b64 = []
             for img in imagenes:
-                img.seek(0)
-                b64 = base64.b64encode(img.read()).decode()
-                ext = img.name.split(".")[-1].lower()
-                if ext == "jpg":
-                    ext = "jpeg"
-                imagenes_b64.append(f"data:image/{ext};base64,{b64}")
+                try:
+                    img.seek(0)
+                    pil_img = PILImage.open(img).convert("RGB")
+                    buf = BytesIO()
+                    pil_img.save(buf, format="JPEG", quality=90)
+                    buf.seek(0)
+                    b64 = base64.b64encode(buf.read()).decode()
+                    imagenes_b64.append(f"data:image/jpeg;base64,{b64}")
+                except Exception as e:
+                    st.warning(f"No se pudo cargar {img.name}: {e}")
 
             st.session_state.datos["imagenes_b64"] = imagenes_b64
             st.session_state["imagenes_b64_backup"] = imagenes_b64
@@ -293,16 +299,18 @@ with col_form:
                 st.rerun()
 
         if st.session_state.datos.get("imagenes_b64"):
-            from pdf_generator import generar_pdf
-            pdf = generar_pdf(st.session_state.datos)
-            nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
-            st.download_button(
-                label="⬇ Descargar PDF ahora",
-                data=pdf,
-                file_name=f"Informe_{nombre}.pdf",
-                mime="application/pdf",
-                key="pdf_paso7"
-            )
+            st.success(f"✅ {len(st.session_state.datos['imagenes_b64'])} imagen(es) cargada(s) correctamente")
+            if st.button("📄 Generar PDF con imágenes", key="btn_pdf_imagenes"):
+                from pdf_generator import generar_pdf
+                pdf = generar_pdf(st.session_state.datos)
+                nombre = st.session_state.datos.get('paciente', 'paciente').replace(' ', '_')
+                st.download_button(
+                    label="⬇ Descargar PDF",
+                    data=pdf,
+                    file_name=f"Informe_{nombre}.pdf",
+                    mime="application/pdf",
+                    key="pdf_paso7_download"
+                )
 
     # ── PASO 8: Descargar ──
     elif st.session_state.paso == 8:
